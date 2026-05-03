@@ -1,0 +1,31 @@
+name: Production Deploy
+
+on:
+  push:
+    branches:
+      - main # Or your default branch name
+
+permissions:
+  id-token: write # Required for the OIDC handshake
+  contents: read # Required to read the files in the repo
+
+jobs:
+  deploy-to-s3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate with AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # Replace with the ARN of the role you created in Step 2
+          role-to-assume: arn:aws:iam::797189004317:role/githubactions-chrisvalcke-website
+          aws-region: us-west-1 # The region your bucket is in
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync . s3://chrisvalcke.com \
+            --delete \
+            --exclude ".git/*" \
+            --exclude ".github/*"

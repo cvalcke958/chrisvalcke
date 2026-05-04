@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main # Or your default branch name
-    workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
   id-token: write # Required for the OIDC handshake
